@@ -7,7 +7,11 @@ from database import create_db_and_tables, engine, Entry
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 from ucas_scaper import scrape
-from fastapi_utils.tasks import repeat_every
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
+
+async def repeat_task():
+    print('Performing periodic scrape...')
+    scrape()
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -26,6 +30,11 @@ async def lifespan(app: FastAPI):
         else:
             print(f"Database contains {count} records. Skipping initial scrape.")
     
+    scheduler = AsyncIOScheduler(timezone=f'GMT')
+    # repeat task every 10 seconds
+    scheduler.add_job(func=repeat_task, trigger='interval', seconds=60*60*12) # Run every 12 hours
+    scheduler.start()
+
     yield 
 
 app = FastAPI(lifespan=lifespan, title="Apprenticeship API")
@@ -45,12 +54,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"]
 )
-
-@app.on_event("startup")
-@repeat_every(seconds=60*60*12) # repeat every 12 hours
-def periodic_scrape():
-    print("Performing periodic scrape...")
-    scrape()
 
 @app.get('/')
 def root():

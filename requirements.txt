@@ -4,5 +4,4 @@ requests
 fastapi
 uvicorn
 typing
-fastapi-utils
-typing_inspect
+apscheduler

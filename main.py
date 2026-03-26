@@ -1,15 +1,38 @@
+from contextlib import asynccontextmanager
+import threading
 from fastapi import FastAPI, Depends
-from sqlmodel import Session, select
+from sqlmodel import Session, func, select
 from typing import List
-from database import engine, Entry
+from database import create_db_and_tables, engine, Entry
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
+from ucas_scaper import scrape
 
-app = FastAPI(title="Apprenticeship API")
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # 1. Ensure tables exist
+    create_db_and_tables()
+    
+    # 2. Check if DB is empty
+    with Session(engine) as session:
+        count = session.exec(select(func.count(Entry.id))).one()
+        
+        if count == 0:
+            print("Database empty! Starting initial scrape in background...")
+            # Run in a separate thread so the API doesn't "freeze" while scraping
+            thread = threading.Thread(target=scrape)
+            thread.start()
+        else:
+            print(f"Database contains {count} records. Skipping initial scrape.")
+    
+    yield 
+
+app = FastAPI(lifespan=lifespan, title="Apprenticeship API")
 
 origins = [
     "http://localhost:5173",
-    "localhost:5173"
+    "localhost:5173",
+    "https://mr-code-coder.github.io/apprenticeship-tracker-and-site/"
 ]
 
 app.add_middleware(

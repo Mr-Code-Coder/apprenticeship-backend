@@ -32,7 +32,8 @@ app = FastAPI(lifespan=lifespan, title="Apprenticeship API")
 origins = [
     "http://localhost:5173",
     "localhost:5173",
-    "https://mr-code-coder.github.io/apprenticeship-tracker-and-site/"
+    "https://mr-code-coder.github.io/apprenticeship-tracker-and-site/",
+    "https://mr-code-coder.github.io/",
     "https://mr-code-coder.github.io"
 ]
 

@@ -1,4 +1,5 @@
 from datetime import datetime, date
+import os
 from typing import Optional
 from sqlmodel import Field, Session, SQLModel, create_engine
 
@@ -16,7 +17,8 @@ class Entry(SQLModel, table=True):
 
 # Database file
 
-sqlite_file_name = "database.db"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+sqlite_file_name = os.path.join(BASE_DIR, "database.db")
 sqlite_url = f"sqlite:///{sqlite_file_name}"
 
 # The engine

@@ -33,11 +33,13 @@ origins = [
     "http://localhost:5173",
     "localhost:5173",
     "https://mr-code-coder.github.io/apprenticeship-tracker-and-site/"
+    "https://mr-code-coder.github.io"
 ]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins, # Allow all websites (fine for a local project)
+    allow_origins=origins, 
+    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"]
 )

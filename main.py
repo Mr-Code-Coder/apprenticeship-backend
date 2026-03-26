@@ -7,6 +7,7 @@ from database import create_db_and_tables, engine, Entry
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 from ucas_scaper import scrape
+from fastapi_utils.tasks import repeat_every
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -44,6 +45,12 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"]
 )
+
+@app.on_event("startup")
+@repeat_every(seconds=60*60*12) # repeat every 12 hours
+def periodic_scrape():
+    print("Performing periodic scrape...")
+    scrape()
 
 @app.get('/')
 def root():

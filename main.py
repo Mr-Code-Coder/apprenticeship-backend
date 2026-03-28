@@ -18,20 +18,19 @@ async def lifespan(app: FastAPI):
     # 1. Ensure tables exist
     create_db_and_tables()
     
-    # 2. Check if DB is empty
+    # 2. Fill / update database
     with Session(engine) as session:
-        count = session.exec(select(func.count(Entry.id))).one()
+        #count = session.exec(select(func.count(Entry.id))).one()
         
-        if count == 0:
-            print("Database empty! Starting initial scrape in background...")
-            # Run in a separate thread so the API doesn't "freeze" while scraping
-            thread = threading.Thread(target=scrape)
-            thread.start()
-        else:
-            print(f"Database contains {count} records. Skipping initial scrape.")
+        #if count == 0:
+        #    print("Database empty! Starting initial scrape in background...")
+        #    # Run in a separate thread so the API doesn't "freeze" while scraping
+        thread = threading.Thread(target=scrape)
+        thread.start()
+        #else:
+        #    print(f"Database contains {count} records. Skipping initial scrape.")
     
     scheduler = AsyncIOScheduler(timezone=f'GMT')
-    # repeat task every 10 seconds
     scheduler.add_job(func=repeat_task, trigger='interval', seconds=60*60*12) # Run every 12 hours
     scheduler.start()
 

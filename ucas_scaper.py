@@ -93,3 +93,6 @@ def scrape():
 
     print("Scrape complete")
         #print(f"{title} -- \033[0;32m{link} -- \033[0;34m{employer} -- \033[1;35m{location}\033[0m -- {apply_value} -- {start_value}")
+
+if __name__ == "__main__":
+    scrape()

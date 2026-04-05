@@ -1,6 +1,6 @@
 # apprenticeship-tracker-and-site
 
-how to launch react: 
+how to launch test react: 
     cd frontend
     npm run dev
     

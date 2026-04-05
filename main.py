@@ -70,7 +70,7 @@ def get_all_jobs(session: Session = Depends(get_session)): # safely open a sessi
     return results
 
 @app.get("/scrape", response_model=List[Entry])
-def scrape_and_get_jobs(session: Session = Depends(get_session)):
+async def scrape_and_get_jobs(session: Session = Depends(get_session)):
     scrape()
     statement = select(Entry).order_by(Entry.apply_date)
     results = session.exec(statement).all()
